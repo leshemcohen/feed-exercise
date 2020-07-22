@@ -26,6 +26,8 @@ open class FeedViewModel : ViewModel() {
 
     private val BASE_URL = "https://assets.swishvideoapp.com/"
 
+
+
     fun getIsLoading(): LiveData<Boolean> = isLoading
     fun getIsEmpty(): LiveData<Boolean> = isEmpty
     fun getFeedItems(): LiveData<List<FeedItem>> = feedItems
