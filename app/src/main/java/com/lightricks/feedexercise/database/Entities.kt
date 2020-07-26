@@ -3,7 +3,6 @@ package com.lightricks.feedexercise.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.moshi.Json
 
 /**
  * todo: add Room's Entity data class(es) here

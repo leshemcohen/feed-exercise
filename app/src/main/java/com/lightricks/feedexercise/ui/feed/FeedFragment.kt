@@ -10,13 +10,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import com.lightricks.feedexercise.R
-import com.lightricks.feedexercise.data.FeedItem
-import com.lightricks.feedexercise.database.AppDatabase
-import com.lightricks.feedexercise.database.FeedItemEntity
 import com.lightricks.feedexercise.databinding.FeedFragmentBinding
 
 /**

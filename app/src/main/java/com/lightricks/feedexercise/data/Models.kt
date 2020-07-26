@@ -1,7 +1,5 @@
 package com.lightricks.feedexercise.data
 
-import com.squareup.moshi.*
-
 
 /**
  * This data class is our internal representation of a feed item.
