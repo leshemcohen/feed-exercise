@@ -29,43 +29,21 @@ class FeedFragment : Fragment() {
     private lateinit var dataBinding: FeedFragmentBinding
     private lateinit var viewModel: FeedViewModel
     private lateinit var feedAdapter: FeedAdapter
-//    private lateinit var feedDatabase: AppDatabase
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         dataBinding = DataBindingUtil.inflate(inflater, R.layout.feed_fragment, container, false)
-//        setupDatabase()
         setupViewModel()
         setupViews()
         return dataBinding.root
     }
-
-//    private fun setupDatabase()
-//    {
-//        feedDatabase = Room.databaseBuilder(
-//            requireContext(),
-//            AppDatabase::class.java, "database-feeditems"
-//        ).build()
-//    }
-
-//    private fun InsertToDb(items : List<FeedItem>)
-//    {
-//        val list = ArrayList<FeedItemEntity>()
-//        for (item in items)
-//        {
-//            val feedItemEntity = FeedItemEntity(item.id, item.thumbnailUrl, item.isPremium)
-//            list.add(feedItemEntity)
-//        }
-//        feedDatabase.feedItemDao().insertAll(list)
-//    }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this, FeedViewModelFactory(activity?.application))
             .get(FeedViewModel::class.java)
 
         viewModel.getFeedItems().observe(viewLifecycleOwner, Observer { items ->
-//            InsertToDb(items)
             feedAdapter.items = items
         })
 

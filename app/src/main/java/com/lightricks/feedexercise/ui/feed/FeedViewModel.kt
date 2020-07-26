@@ -5,10 +5,12 @@ import android.util.Log
 import androidx.lifecycle.*
 import androidx.room.Room
 import com.lightricks.feedexercise.data.FeedItem
-import com.lightricks.feedexercise.data.ThumbnailUrlAdapter
 import com.lightricks.feedexercise.database.AppDatabase
+import com.lightricks.feedexercise.database.FeedItemEntity
 import com.lightricks.feedexercise.network.FeedApiService
+import com.lightricks.feedexercise.network.FeedItemDTO
 import com.lightricks.feedexercise.network.GetFeedResponse
+import com.lightricks.feedexercise.network.ThumbnailUrlAdapter
 import com.lightricks.feedexercise.util.Event
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -61,27 +63,47 @@ open class FeedViewModel(application: Application?) : AndroidViewModel(applicati
         val service = retrofit.create(FeedApiService::class.java)
         service.singleFeedItem()
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
+//            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ feedResponse ->
                 handleResponse(feedResponse)
             },{ error ->
                 handleNetworkError(error)
             })
+    }
+
+    private fun convarteToFeedItemsList(items: List<FeedItemDTO>?): List<FeedItem> {
+        val listFeedItem = ArrayList<FeedItem>()
+        for (item in items!!)
+        {
+            val feedItem = FeedItem(item.id, item.thumbnailUrl, item.isPremium)
+            listFeedItem.add(feedItem)
+        }
+        return listFeedItem
+    }
 
 
+    private fun insertToDb(items: List<FeedItemDTO>?){
+        val listEntity = ArrayList<FeedItemEntity>()
+        for (item in items!!)
+        {
+            val feedItemEntity = FeedItemEntity(item.id, item.thumbnailUrl, item.isPremium)
+            listEntity.add(feedItemEntity)
+        }
+        feedDatabase.feedItemDao().insertAll(listEntity).subscribe()
     }
 
     private fun handleNetworkError(error: Throwable?) {
-        isLoading.value = false
+        isLoading.postValue(false)
         Log.d("TAG", "handleNetworkError: ${error?.message.toString()}" )//+ error.toString())
     }
 
     private fun handleResponse(feedResponse: GetFeedResponse?) {
         Log.d("TAG", "handleResponse: ${feedResponse?.toString()}")
         val feed = feedResponse?.templatesMetadata
-        feedItems.setValue(feed)
-        isLoading.value = false
-        isEmpty.value = false
+        insertToDb(feed)
+        feedItems.postValue(convarteToFeedItemsList(feed))
+        isLoading.postValue(false)
+        isEmpty.postValue(feedItems.getValue()?.isEmpty())
     }
 
 }
