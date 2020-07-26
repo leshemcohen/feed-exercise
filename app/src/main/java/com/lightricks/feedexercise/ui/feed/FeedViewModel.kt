@@ -1,9 +1,12 @@
 package com.lightricks.feedexercise.ui.feed
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import androidx.room.Room
 import com.lightricks.feedexercise.data.FeedItem
 import com.lightricks.feedexercise.data.ThumbnailUrlAdapter
+import com.lightricks.feedexercise.database.AppDatabase
 import com.lightricks.feedexercise.network.FeedApiService
 import com.lightricks.feedexercise.network.GetFeedResponse
 import com.lightricks.feedexercise.util.Event
@@ -18,11 +21,14 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 /**
  * This view model manages the data for [FeedFragment].
  */
-open class FeedViewModel : ViewModel() {
+open class FeedViewModel(application: Application?) : AndroidViewModel(application!!) {
     private val isLoading = MutableLiveData<Boolean>()
     private val isEmpty = MutableLiveData<Boolean>()
     private val feedItems = MediatorLiveData<List<FeedItem>>()
     private val networkErrorEvent = MutableLiveData<Event<String>>()
+
+    private val feedDatabase = Room.databaseBuilder(getApplication(), AppDatabase::class.java,
+                                                "database-feeditems").build()
 
     private val BASE_URL = "https://assets.swishvideoapp.com/"
 
@@ -40,6 +46,7 @@ open class FeedViewModel : ViewModel() {
     fun refresh() {
         isEmpty.value = true
         isLoading.value = true
+
 
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -84,12 +91,12 @@ open class FeedViewModel : ViewModel() {
  * It's not necessary to use this factory at this stage. But if we will need to inject
  * dependencies into [FeedViewModel] in the future, then this is the place to do it.
  */
-class FeedViewModelFactory : ViewModelProvider.Factory {
+class FeedViewModelFactory(val application: Application?) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (!modelClass.isAssignableFrom(FeedViewModel::class.java)) {
             throw IllegalArgumentException("factory used with a wrong class")
         }
         @Suppress("UNCHECKED_CAST")
-        return FeedViewModel() as T
+        return FeedViewModel(application) as T
     }
 }
