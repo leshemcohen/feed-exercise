@@ -13,8 +13,8 @@ import com.squareup.moshi.Json
 
 @Entity
 data class FeedItemEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val id: String,
     @ColumnInfo(name = "thumbnail_url") val thumbnailUrl: String?,
-    @ColumnInfo(name = "is_premium") val isPremium: String?
+    @ColumnInfo(name = "is_premium") val isPremium: Boolean
 )
 

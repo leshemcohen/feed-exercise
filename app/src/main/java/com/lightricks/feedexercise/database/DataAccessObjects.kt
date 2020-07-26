@@ -1,10 +1,7 @@
 package com.lightricks.feedexercise.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import io.reactivex.Completable
 
 /***
@@ -13,8 +10,11 @@ import io.reactivex.Completable
 
 @Dao
 interface FeedItemDao {
-    @Insert
-    fun insertAll(vararg feedItemEntitys: FeedItemEntity) : Completable
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(feedItemEntitylist: List<FeedItemEntity>) : Completable
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertFeedItem(vararg feedItemEntitys: FeedItemEntity) : Completable
 
     @Query("DELETE FROM FeedItemEntity")
     fun deleteAll() : Completable

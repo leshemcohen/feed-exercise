@@ -10,9 +10,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import com.lightricks.feedexercise.R
+import com.lightricks.feedexercise.data.FeedItem
+import com.lightricks.feedexercise.database.AppDatabase
+import com.lightricks.feedexercise.database.FeedItemDao
+import com.lightricks.feedexercise.database.FeedItemEntity
 import com.lightricks.feedexercise.databinding.FeedFragmentBinding
 
 /**
@@ -25,14 +30,35 @@ class FeedFragment : Fragment() {
     private lateinit var dataBinding: FeedFragmentBinding
     private lateinit var viewModel: FeedViewModel
     private lateinit var feedAdapter: FeedAdapter
+    private lateinit var feedDatabase: AppDatabase
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         dataBinding = DataBindingUtil.inflate(inflater, R.layout.feed_fragment, container, false)
+        setupDatabase()
         setupViewModel()
         setupViews()
         return dataBinding.root
+    }
+
+    private fun setupDatabase()
+    {
+        feedDatabase = Room.databaseBuilder(
+            requireContext(),
+            AppDatabase::class.java, "database-feeditems"
+        ).build()
+    }
+
+    private fun InsertToDb(items : List<FeedItem>)
+    {
+        val list = ArrayList<FeedItemEntity>()
+        for (item in items)
+        {
+            val feedItemEntity = FeedItemEntity(item.id, item.thumbnailUrl, item.isPremium)
+            list.add(feedItemEntity)
+        }
+        feedDatabase.feedItemDao().insertAll(list)
     }
 
     private fun setupViewModel() {
@@ -40,6 +66,7 @@ class FeedFragment : Fragment() {
             .get(FeedViewModel::class.java)
 
         viewModel.getFeedItems().observe(viewLifecycleOwner, Observer { items ->
+            InsertToDb(items)
             feedAdapter.items = items
         })
 
