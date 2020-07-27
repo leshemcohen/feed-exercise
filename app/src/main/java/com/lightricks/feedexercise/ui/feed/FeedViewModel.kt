@@ -22,7 +22,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 /**
  * This view model manages the data for [FeedFragment].
  */
-open class FeedViewModel(application: Application?) : AndroidViewModel(application!!) {
+open class FeedViewModel(application: Application) : AndroidViewModel(application) {
     private val isLoading = MutableLiveData<Boolean>()
     private val isEmpty = MutableLiveData<Boolean>()
     private val feedItems = MediatorLiveData<List<FeedItem>>()
@@ -33,6 +33,17 @@ open class FeedViewModel(application: Application?) : AndroidViewModel(applicati
 
     private val BASE_URL = "https://assets.swishvideoapp.com/"
 
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(
+            MoshiConverterFactory.create(Moshi.Builder()
+                .add(KotlinJsonAdapterFactory())
+                .add(ThumbnailUrlAdapter())
+                .build()))
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .build()
+
+    private val service = retrofit.create(FeedApiService::class.java)
 
 
     fun getIsLoading(): LiveData<Boolean> = isLoading
@@ -48,18 +59,6 @@ open class FeedViewModel(application: Application?) : AndroidViewModel(applicati
         isEmpty.value = true
         isLoading.value = true
 
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(
-                MoshiConverterFactory.create(Moshi.Builder()
-                    .add(KotlinJsonAdapterFactory())
-                    .add(ThumbnailUrlAdapter())
-                    .build()))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
-
-        val service = retrofit.create(FeedApiService::class.java)
         service.singleFeedItem()
             .subscribeOn(Schedulers.io())
 //            .observeOn(AndroidSchedulers.mainThread())
@@ -70,7 +69,7 @@ open class FeedViewModel(application: Application?) : AndroidViewModel(applicati
             })
     }
 
-    private fun convarteToFeedItemsList(items: List<FeedItemDTO>?): List<FeedItem> {
+    private fun convertToFeedItemsList(items: List<FeedItemDTO>?): List<FeedItem> {
         val listFeedItem = ArrayList<FeedItem>()
         for (item in items!!)
         {
@@ -100,9 +99,9 @@ open class FeedViewModel(application: Application?) : AndroidViewModel(applicati
         Log.d("TAG", "handleResponse: ${feedResponse?.toString()}")
         val feed = feedResponse?.templatesMetadata
         insertToDb(feed)
-        feedItems.postValue(convarteToFeedItemsList(feed))
+        feedItems.postValue(convertToFeedItemsList(feed))
         isLoading.postValue(false)
-        isEmpty.postValue(feedItems.getValue()?.isEmpty())
+        isEmpty.postValue(feed?.isEmpty() ?: true)
     }
 
 }
@@ -112,7 +111,7 @@ open class FeedViewModel(application: Application?) : AndroidViewModel(applicati
  * It's not necessary to use this factory at this stage. But if we will need to inject
  * dependencies into [FeedViewModel] in the future, then this is the place to do it.
  */
-class FeedViewModelFactory(val application: Application?) : ViewModelProvider.Factory {
+class FeedViewModelFactory(val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (!modelClass.isAssignableFrom(FeedViewModel::class.java)) {
             throw IllegalArgumentException("factory used with a wrong class")
