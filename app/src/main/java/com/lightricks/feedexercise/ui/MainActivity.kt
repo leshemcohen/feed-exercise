@@ -10,7 +10,7 @@ import com.lightricks.feedexercise.R
  */
 class MainActivity : AppCompatActivity() {
     private val TAG = "Main"
-
+    private val tmp = "bla2"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
