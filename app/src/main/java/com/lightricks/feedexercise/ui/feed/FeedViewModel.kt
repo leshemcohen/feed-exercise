@@ -32,6 +32,7 @@ open class FeedViewModel(application: Application) : AndroidViewModel(applicatio
                                                 "database-feeditems").build()
 
     private val BASE_URL = "https://assets.swishvideoapp.com/"
+    private val tmp = "bla"
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
