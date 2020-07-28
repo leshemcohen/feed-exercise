@@ -10,10 +10,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import com.lightricks.feedexercise.R
+import com.lightricks.feedexercise.data.FeedRepository
+import com.lightricks.feedexercise.database.AppDatabase
 import com.lightricks.feedexercise.databinding.FeedFragmentBinding
+import com.lightricks.feedexercise.network.FeedApiService
+import com.lightricks.feedexercise.network.ServiceBuilder
+
+
 
 /**
  * This Fragment shows the feed grid. The feed consists of template thumbnail images.
@@ -25,18 +32,28 @@ class FeedFragment : Fragment() {
     private lateinit var dataBinding: FeedFragmentBinding
     private lateinit var viewModel: FeedViewModel
     private lateinit var feedAdapter: FeedAdapter
+    private lateinit var feedRepository: FeedRepository
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         dataBinding = DataBindingUtil.inflate(inflater, R.layout.feed_fragment, container, false)
+        setupRepository()
         setupViewModel()
         setupViews()
         return dataBinding.root
     }
+    private fun setupRepository()
+    {
+        val feedDatabase = Room.databaseBuilder(requireActivity().application, AppDatabase::class.java,
+            "database-feeditems").build()
+
+         val service = ServiceBuilder.buildService(FeedApiService::class.java)
+        feedRepository = FeedRepository(service, feedDatabase)
+    }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this, FeedViewModelFactory(requireActivity().application))
+        viewModel = ViewModelProvider(this, FeedViewModelFactory(requireActivity().application, feedRepository))
             .get(FeedViewModel::class.java)
 
         viewModel.getFeedItems().observe(viewLifecycleOwner, Observer { items ->
