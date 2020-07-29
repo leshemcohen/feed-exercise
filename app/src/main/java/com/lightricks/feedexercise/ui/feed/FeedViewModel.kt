@@ -40,21 +40,10 @@ open class FeedViewModel(application: Application,private val feedRepository : F
     }
 
     fun refresh() {
-//        isEmpty.value = true
         isLoading.value = true
         feedRepository.refresh()
             .subscribeOn(Schedulers.io())
             .subscribe({ handleResponse() },{ throwable-> handleNetworkError(throwable)})
-    }
-
-    private fun convertToFeedItemsList(items: List<FeedItemDTO>?): List<FeedItem> {
-        val listFeedItem = ArrayList<FeedItem>()
-        for (item in items!!)
-        {
-            val feedItem = FeedItem(item.id, item.thumbnailUrl, item.isPremium)
-            listFeedItem.add(feedItem)
-        }
-        return listFeedItem
     }
 
     private fun handleNetworkError(error: Throwable?) {
@@ -65,8 +54,6 @@ open class FeedViewModel(application: Application,private val feedRepository : F
     private fun handleResponse() {
         Log.d("TAG", "handleResponse")
         isLoading.postValue(false)
-//        isEmpty.postValue(false)
-
     }
 }
 
