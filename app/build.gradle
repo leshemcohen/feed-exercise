@@ -34,7 +34,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
 dependencies {
     // Kotlin standard library
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -71,4 +70,18 @@ dependencies {
     implementation 'androidx.room:room-rxjava2:2.2.5'
     kapt 'androidx.room:room-compiler:2.2.5'
 
+
+
+    // Testing frameworks
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.ext:truth:1.2.0'
+    androidTestImplementation 'androidx.arch.core:core-testing:2.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+
+
 }
+
