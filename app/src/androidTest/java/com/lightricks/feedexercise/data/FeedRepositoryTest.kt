@@ -9,7 +9,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.lightricks.feedexercise.database.AppDatabase
 import com.lightricks.feedexercise.database.FeedItemDao
-import com.lightricks.feedexercise.network.FeedApiService
 import com.lightricks.feedexercise.network.MockFeedApiService
 import junit.framework.Assert.assertTrue
 import org.junit.After

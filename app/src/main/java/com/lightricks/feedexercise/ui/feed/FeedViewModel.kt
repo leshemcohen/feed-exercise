@@ -3,19 +3,10 @@ package com.lightricks.feedexercise.ui.feed
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
-import androidx.room.Room
 import com.lightricks.feedexercise.data.FeedItem
 import com.lightricks.feedexercise.data.FeedRepository
-import com.lightricks.feedexercise.database.AppDatabase
-import com.lightricks.feedexercise.database.FeedItemEntity
-import com.lightricks.feedexercise.network.*
 import com.lightricks.feedexercise.util.Event
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.reactivex.schedulers.Schedulers
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 /**
  * This view model manages the data for [FeedFragment].
