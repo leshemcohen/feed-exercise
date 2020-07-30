@@ -45,10 +45,9 @@ class FeedFragment : Fragment() {
     }
     private fun setupRepository()
     {
-        val feedDatabase = Room.databaseBuilder(requireActivity().application, AppDatabase::class.java,
-            "database-feeditems").build()
+        val feedDatabase = AppDatabase.createDatabase(requireActivity().application)
+        val service = ServiceBuilder.buildService(FeedApiService::class.java)
 
-         val service = ServiceBuilder.buildService(FeedApiService::class.java)
         feedRepository = FeedRepository(service, feedDatabase)
     }
 
