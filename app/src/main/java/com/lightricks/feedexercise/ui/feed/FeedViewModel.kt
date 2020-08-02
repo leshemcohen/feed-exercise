@@ -43,6 +43,7 @@ open class FeedViewModel(application: Application,private val feedRepository : F
 
     private fun handleNetworkError(error: Throwable?) {
         isLoading.postValue(false)
+        networkErrorEvent.postValue(Event<String>(error?.message.toString()))
         Log.d("TAG", "handleNetworkError: ${error?.message.toString()}" )//+ error.toString())
     }
 }
