@@ -10,8 +10,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.lightricks.feedexercise.database.AppDatabase
 import com.lightricks.feedexercise.database.FeedItemDao
 import com.lightricks.feedexercise.network.MockFeedApiService
-import junit.framework.Assert.assertTrue
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -47,7 +47,8 @@ class FeedRepositoryTest {
         val observer = feedRepository.refresh().test()
         observer.awaitTerminalEvent()
         observer.assertComplete()
-        assertTrue("Data loaded to db",db.feedItemDao().getCount() > 0)
+        assertTrue("Data loaded to db",db.feedItemDao().getCount() ==
+                apiService.numberOfItems)
     }
 
     @get:Rule
@@ -55,11 +56,9 @@ class FeedRepositoryTest {
     @Test
     fun getFeedItems(){
         assertTrue("Database is empty",dao.getCount() == 0)
-        val observer = feedRepository.refresh().test()
-        observer.awaitTerminalEvent()
-        observer.assertComplete()
+        feedRepository.refresh().blockingAwait()
         val feedItems = feedRepository.getFeedItems().blockingObserve()
-        assertTrue("Feed Items", !feedItems.isNullOrEmpty())
+        assertTrue(feedItems?.size?:0 == apiService.numberOfItems)
     }
 
 

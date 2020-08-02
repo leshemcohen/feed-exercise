@@ -21,19 +21,19 @@ class FeedRepository (
             it.toFeedItems()
         }
 
-    public fun refresh() : Completable{
+    fun refresh() : Completable{
         return feedApiService.singleFeedItem().flatMapCompletable { response ->  insertToDb(response.templatesMetadata)}
     }
 
 
     private fun insertToDb(items: List<FeedItemDTO>?): Completable{
-        val listEntity = ArrayList<FeedItemEntity>()
-        for (item in items!!)
-        {
-            val feedItemEntity = FeedItemEntity(item.id, item.thumbnailUrl, item.isPremium)
-            listEntity.add(feedItemEntity)
+        return feedDatabase.feedItemDao().insertAll(items?.toFeedItemsEntity()?: ArrayList<FeedItemEntity>())
+    }
+
+    fun List<FeedItemDTO>.toFeedItemsEntity() : List<FeedItemEntity>{
+        return map {
+            FeedItemEntity(it.id, it.thumbnailUrl, it.isPremium)
         }
-        return feedDatabase.feedItemDao().insertAll(listEntity)
     }
 
     fun List<FeedItemEntity>.toFeedItems(): List<FeedItem> {

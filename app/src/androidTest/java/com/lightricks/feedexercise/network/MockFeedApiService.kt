@@ -17,6 +17,9 @@ class MockFeedApiService: FeedApiService{
             .use { it.readText() }
     }
 
+    public var numberOfItems : Int = -1
+
+    
     override fun singleFeedItem(): Single<GetFeedResponse> {
         val json = readAsset("get_feed_response.json")
         val getFeedResponse : GetFeedResponse
@@ -26,7 +29,10 @@ class MockFeedApiService: FeedApiService{
             .build()
         val adapter  = moshi.adapter(GetFeedResponse::class.java)
         getFeedResponse = adapter.fromJson(json)!!
-        return Single.just(getFeedResponse);
+
+        numberOfItems = getFeedResponse.templatesMetadata.size
+
+        return Single.just(getFeedResponse)
     }
 
 }

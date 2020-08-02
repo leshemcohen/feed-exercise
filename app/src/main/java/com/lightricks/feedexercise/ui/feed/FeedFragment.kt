@@ -13,11 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import com.google.android.material.snackbar.Snackbar
 import com.lightricks.feedexercise.R
-import com.lightricks.feedexercise.data.FeedRepository
-import com.lightricks.feedexercise.database.AppDatabase
 import com.lightricks.feedexercise.databinding.FeedFragmentBinding
-import com.lightricks.feedexercise.network.FeedApiService
-import com.lightricks.feedexercise.network.ServiceBuilder
 
 
 /**
@@ -30,27 +26,18 @@ class FeedFragment : Fragment() {
     private lateinit var dataBinding: FeedFragmentBinding
     private lateinit var viewModel: FeedViewModel
     private lateinit var feedAdapter: FeedAdapter
-    private lateinit var feedRepository: FeedRepository
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         dataBinding = DataBindingUtil.inflate(inflater, R.layout.feed_fragment, container, false)
-        setupRepository()
         setupViewModel()
         setupViews()
         return dataBinding.root
     }
-    private fun setupRepository()
-    {
-        val feedDatabase = AppDatabase.createDatabase(requireActivity().application)
-        val service = ServiceBuilder.buildService(FeedApiService::class.java)
-
-        feedRepository = FeedRepository(service, feedDatabase)
-    }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this, FeedViewModelFactory(requireActivity().application, feedRepository))
+        viewModel = ViewModelProvider(this, FeedViewModelFactory(requireActivity().application))
             .get(FeedViewModel::class.java)
 
         viewModel.getFeedItems().observe(viewLifecycleOwner, Observer { items ->

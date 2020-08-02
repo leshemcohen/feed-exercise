@@ -14,8 +14,16 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun feedItemDao(): FeedItemDao
 
     companion object {
-        fun createDatabase(context: Context): AppDatabase
-                = Room.databaseBuilder(context, AppDatabase::class.java,
-            "database-feeditems").build()
+        private lateinit var INSTANCE: AppDatabase
+
+        fun getDatabase(context: Context): AppDatabase {
+            synchronized(AppDatabase::class.java) {
+                if (!::INSTANCE.isInitialized) {
+                    INSTANCE = Room.databaseBuilder(context, AppDatabase::class.java,
+                        "database-feeditems").build()
+                }
+            }
+            return INSTANCE
+        }
     }
 }

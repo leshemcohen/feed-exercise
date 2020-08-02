@@ -33,7 +33,6 @@ object ServiceBuilder {
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build()
 
-    fun<T> buildService(service: Class<T>): T{
-        return retrofit.create(service)
-    }
+    val service: FeedApiService = retrofit.create(FeedApiService::class.java)
+
 }
